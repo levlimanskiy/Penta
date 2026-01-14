@@ -5,9 +5,8 @@ from datetime import datetime
 from core.domain.organization import Organization
 from core.domain.transaction import Transaction
 from core.domain.account import Account
-from core.domain.accounting_entry import AccountingEntry
+from core.domain.journal_entry import JournalEntry
 from core.domain.document import Document
-from core.domain.entry_side import EntrySide
 from core.domain.ledger import Ledger
 from core.domain.doc_types.payment_order import PaymentOrder
 
@@ -36,7 +35,7 @@ po = PaymentOrder(
 )
 
 posting = po.post()
-Ledger.validate_double_entry(posting.entries)
+Ledger.validate(posting.entries)
 print("Ledger validation passed")
 print('Payment order posted automatically:')
 for e in posting.entries:

@@ -3,16 +3,15 @@ from decimal import Decimal
 from uuid import UUID, uuid4
 
 from core.domain.account import Account
-from core.domain.entry_side import EntrySide
 
 @dataclass(frozen=True)
-class AccountingEntry:
+class JournalEntry:
     id: UUID
     document_id: UUID
     organization_id: UUID
 
-    account: Account
-    side: EntrySide
+    debit_account: Account
+    credit_account: Account
     amount: Decimal
 
     budgeting_code: str
@@ -23,16 +22,19 @@ class AccountingEntry:
     def create(
         document_id: UUID,
         organization_id: UUID,
-        account: Account,
-        side: EntrySide,
+        debit_account: Account,
+        credit_account: Account,
         amount: Decimal,
         budgeting_code: str,
         flow_code: str,
         target_code: str
-    ) -> "AccountingEntry":
+    ) -> "JournalEntry":
         
-        if amount <= Decimal("0"):
-            raise ValueError("Amount must be positive")
+        if debit_account == credit_account:
+            raise ValueError('Debit and credit accounts must differ')
+        
+        if amount == Decimal("0"):
+            raise ValueError("Amount must be nonzero")
 
         for name, value in {
             "budgeting_code": budgeting_code,
@@ -42,12 +44,12 @@ class AccountingEntry:
             if not value.strip():
                 raise ValueError(f"{name} is required")
         
-        return AccountingEntry(
+        return JournalEntry(
             id=uuid4(),
             document_id=document_id,
             organization_id=organization_id,
-            account=account,
-            side=side,
+            debit_account=debit_account,
+            credit_account=credit_account,
             amount=amount,
             budgeting_code=budgeting_code.strip(),
             flow_code=flow_code.strip(),

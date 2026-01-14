@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import List
 
-from core.domain.accounting_entry import AccountingEntry
+from core.domain.journal_entry import JournalEntry
 
 @dataclass(frozen=True)
 class PostingResult:
-    entries: List[AccountingEntry]
+    entries: List[JournalEntry]
     
