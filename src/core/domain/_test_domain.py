@@ -1,18 +1,17 @@
+
 from decimal import Decimal
+from datetime import datetime
 
 from core.domain.organization import Organization
 from core.domain.transaction import Transaction
 from core.domain.account import Account
 from core.domain.accounting_entry import AccountingEntry
 from core.domain.document import Document
+from core.domain.entry_side import EntrySide
+from core.domain.ledger import Ledger
+from core.domain.doc_types.payment_order import PaymentOrder
 
 org = Organization.create("УД П РФ")
-
-tx = Transaction.create(
-    organization_id=org.id,
-    amount=Decimal("15000.00"),
-    description="Закупка оборудования"
-)
 
 cash_account = Account(
     code="5 201 11-1",
@@ -24,36 +23,21 @@ expense_account = Account(
     name="Расходы на приобретение оборудования"
 )
 
-document = Document.create(
-    number = "ПП-001/2026",
-    organization_id=org.id
-)
 
-entry_debit = AccountingEntry.create(
-    document_id = document.id,
+po = PaymentOrder(
+    number='666666',
     organization_id=org.id,
-    account=expense_account,
-    amount=Decimal("150000.00"),
+    amount=Decimal('150000.00'),
+    expense_account=expense_account,
+    cash_account=cash_account,
     budgeting_code="0000 00000000 243",
     flow_code="225",
     target_code="02-01"
 )
 
-entry_credit = AccountingEntry.create(
-    document_id=document.id,
-    organization_id=org.id,
-    account=cash_account,
-    amount=Decimal("-150000.00"),
-    budgeting_code="0000 00000000 243",
-    flow_code="225",
-    target_code="02-01"
-)
-
-print("ORGANIZATION:")
-print(org)
-print("\nDOCUMENT:")
-print(document)
-print("\nENTRIES:")
-print(entry_debit)
-print(entry_credit)
-
+posting = po.post()
+Ledger.validate_double_entry(posting.entries)
+print("Ledger validation passed")
+print('Payment order posted automatically:')
+for e in posting.entries:
+    print(e)

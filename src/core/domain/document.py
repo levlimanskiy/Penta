@@ -1,12 +1,12 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, kw_only=True)
 class Document:
-    id: UUID
+    id: UUID = field(default_factory=uuid4)
     number: str
-    date: datetime
+    date: datetime = field(default_factory=datetime.utcnow)
     organization_id: UUID
 
     @staticmethod
