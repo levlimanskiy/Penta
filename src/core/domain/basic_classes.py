@@ -138,7 +138,7 @@ class TreasuryAccount:
             raise ValueError("Personal account (лицевой счёт) required")
          if not kbk.isdigit() or len(kbk) != 20:
             raise ValueError("Invalid KBK")
-         if not oktmo.isdigit() or len(oktmo) not in (8, 11):
+         if not oktmo.isdigit() or len(oktmo) != 8:
             raise ValueError("Invalid OKTMO")
          if not account_number.strip():
             raise ValueError("Account number required")

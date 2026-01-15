@@ -2,10 +2,10 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from uuid import UUID, uuid4
 from datetime import datetime
+from typing import Optional
 
-from core.domain.basic_classes import Account, Document, JournalEntry, Organization, BankAccount, TreasuryAccount
-from core.domain.posting import Postable, PostingResult
-
+from core.domain.basic_classes import *
+from core.domain.posting import *
 # главный тип - договор с поставщиком
 @dataclass(frozen=True)
 class ContractPayable(Document):
@@ -30,7 +30,7 @@ class ContractPayable(Document):
         executor: str,
         treasury_account_id: TreasuryAccount,
     ) -> "ContractPayable":
-
+        doc = Document.create(number, organization_id)
         if not number.strip():
             raise ValueError("Contract number is required")
 
@@ -44,8 +44,8 @@ class ContractPayable(Document):
             raise ValueError("Executor is required")
 
         return ContractPayable(
-            id=uuid4(),
-            number=number.strip(),
+            id=doc.id,
+            number=doc.number.strip(),
             date=date,
             organization_id=organization_id,
             payment_account=payment_account,
@@ -56,9 +56,47 @@ class ContractPayable(Document):
             treasury_account_id=treasury_account_id,
         )
 
+# закрывающий документ
+@dataclass(frozen=True)
+class CompletionDocument(Document):
+    contract_id: UUID
+    amount: Decimal
+    description: str
+    document_type: str
+    acceptance_date: datetime
+
+    @staticmethod
+    def create(
+        number: str,
+        contract_id: UUID,
+        amount: Decimal,
+        description: str,
+        document_type: str,
+        acceptance_date: datetime,
+        organization_id: UUID
+    ) -> "CompletionDocument":
+        
+        doc = Document.create(number, organization_id)
+
+        if not document_type.strip():
+            raise ValueError("Document type required")
+        if acceptance_date > datetime.now():
+            raise ValueError("Acceptance date cannot be in the future")
+
+        return CompletionDocument(
+            id=doc.id, 
+            number=doc.number,
+            date=datetime.now(),
+            organization_id=organization_id,
+            contract_id=contract_id,
+            amount=amount.quantize(Decimal('0.01')),
+            description=description.strip(),
+            document_type=document_type.strip(),
+            acceptance_date=acceptance_date,
+        )
 
 # платёжное поручение (расход) - зкр
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True)
 class PaymentOrder(Document, Postable):
     amount: Decimal
     expense_account: Account

@@ -2,9 +2,9 @@
 from decimal import Decimal
 from datetime import datetime
 
-from core.domain.basic_classes import Organization, Account, JournalEntry, Document, OrganizationType, BankAccount, TreasuryAccount
+from core.domain.basic_classes import * 
 from core.domain.ledger import Ledger
-from core.domain.docs_types import PaymentOrder, ContractPayable
+from core.domain.docs_types import *
 
 
 org_us = Organization.create(
@@ -54,4 +54,15 @@ contract = ContractPayable.create(
     treasury_account_id=our_acc
 )
 
+completion = CompletionDocument.create(
+    number="Акт-1/26",
+    contract_id=contract.id,
+    amount=Decimal('10000.00'),
+    description="Выполнение работ по поставке",
+    document_type="Акт выполненных работ",
+    acceptance_date=datetime(2026, 1, 15),
+    organization_id=org_us.id,
+)
+
 print(contract)
+print(completion)
