@@ -2,13 +2,9 @@
 from decimal import Decimal
 from datetime import datetime
 
-from core.domain.organization import Organization
-from core.domain.transaction import Transaction
-from core.domain.account import Account
-from core.domain.journal_entry import JournalEntry
-from core.domain.document import Document
+from core.domain.basic_classes import Organization, Account, JournalEntry, Document
 from core.domain.ledger import Ledger
-from core.domain.doc_types.payment_order import PaymentOrder
+from core.domain.docs_types import PaymentOrder
 
 org = Organization.create("УД П РФ")
 

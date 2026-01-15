@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Iterable
 
-from core.domain.journal_entry import JournalEntry
+from core.domain.basic_classes import JournalEntry
 
 class Ledger:
 

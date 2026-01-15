@@ -2,12 +2,10 @@ from dataclasses import dataclass
 from decimal import Decimal
 from uuid import UUID
 
-from core.domain.account import Account
-from core.domain.document import Document
-from core.domain.journal_entry import JournalEntry
-from core.domain.postable import Postable
-from core.domain.posting_result import PostingResult
+from core.domain.basic_classes import Account, Document, JournalEntry
+from core.domain.posting import Postable, PostingResult
 
+# платёжное поручение - зкр
 @dataclass(frozen=True, kw_only=True)
 class PaymentOrder(Document, Postable):
     amount: Decimal
