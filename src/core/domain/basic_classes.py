@@ -146,7 +146,6 @@ class TreasuryAccount:
             raise ValueError("Invalid BIK")
          
          return TreasuryAccount(
-             
              id=uuid4(),
              organization_id=organization_id,
              account_number=account_number,
