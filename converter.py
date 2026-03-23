@@ -13,8 +13,6 @@ def normalise_date(date_str: str) -> str:
         parts[2] = str(2000 + int(parts[2]))
     return '.'.join(parts)
 
-# Classes 
-
 class BudgetLookup:
     def __init__(self, csv_path: Path):
         self.csv_path = csv_path
